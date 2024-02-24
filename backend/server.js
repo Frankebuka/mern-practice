@@ -12,6 +12,7 @@ import {
 } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
+import path from "path";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ const connectDb = async () => {
 connectDb();
 
 const app = express();
+const __dirname = path.resolve();
 
 app.use(express.json()); // to accept json data in the body
 app.use(cookieParser());
@@ -44,6 +46,12 @@ app.use("/api/notification", notificationRoutes);
 
 app.use(notFound);
 app.use(errorHandlerMiddleware);
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 
 const server = app.listen(
   3000,
