@@ -1,7 +1,13 @@
-import React from "react";
+import ChatPage from "../components/ChatPage";
+import UsersPage from "../components/UsersPage";
 
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <div className="home_container">
+      <UsersPage />
+      <ChatPage />
+    </div>
+  );
 };
 
 export default Home;
