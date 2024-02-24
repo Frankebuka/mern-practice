@@ -223,9 +223,9 @@ const ChatPage = () => {
 
         const res = await fetch("/api/notification", config);
 
-        const data = await res.json();
-
-        if (data.success === false) return console.log(data.message);
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
 
         setFetchAgain(!fetchAgain);
       } else {
@@ -246,11 +246,10 @@ const ChatPage = () => {
         },
       };
       const res = await fetch("/api/notification", config);
-      // if (!res.ok) {
-      //   throw new Error(`HTTP error! Status: ${res.status}`);
-      // }
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
       const data = await res.json();
-      if (data.success === false) return console.log(data.message);
       setNotification(data);
     };
     fetchNotification();
