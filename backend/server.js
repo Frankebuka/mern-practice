@@ -35,10 +35,6 @@ const __dirname = path.resolve();
 app.use(express.json()); // to accept json data in the body
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("Server is running successfully");
-});
-
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
@@ -47,15 +43,23 @@ app.use("/api/notification", notificationRoutes);
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 
-app.use(express.static(path.join(__dirname, "/frontend/dist")));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-});
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Server is running successfully");
+  });
+}
+
+const PORT = process.env.PORT || 3000;
 
 const server = app.listen(
-  3000,
-  console.log("Server is running on port 3000".yellow.bold)
+  PORT,
+  console.log(`Server is running on port ${PORT}`.yellow.bold)
 );
 
 const io = new Server(server, {
