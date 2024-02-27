@@ -6,10 +6,7 @@ import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-import {
-  errorHandlerMiddleware,
-  notFound,
-} from "./middleware/errorMiddleware.js";
+import { errorHandlerMiddleware } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import path from "path";
@@ -40,7 +37,6 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/notification", notificationRoutes);
 
-app.use(notFound);
 app.use(errorHandlerMiddleware);
 
 if (process.env.NODE_ENV === "production") {

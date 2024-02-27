@@ -5,11 +5,6 @@ const errorHandler = (statusCode, message) => {
   return error;
 };
 
-const notFound = (req, res, next) => {
-  const error = errorHandler(404, `Not Found - ${req.originalUrl}`);
-  next(error);
-};
-
 const errorHandlerMiddleware = (err, req, res, next) => {
   const statusCode = err.status || 500;
   const message = err.message || "Internal Server Error";
@@ -20,4 +15,4 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   });
 };
 
-export { errorHandler, notFound, errorHandlerMiddleware };
+export { errorHandler, errorHandlerMiddleware };
