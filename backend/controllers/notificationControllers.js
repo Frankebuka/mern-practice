@@ -6,7 +6,8 @@ const sendNotification = async (req, res, next) => {
   if (!message)
     return next(errorHandler(400, "Invalid data passed into request"));
   try {
-    await Notification.create(message);
+    const notification = await Notification.create(message);
+    res.json(notification);
   } catch (error) {
     next(error);
   }
