@@ -30,6 +30,11 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
         position: "top",
       });
 
+    if (selectedChat.groupAdmin._id !== user._id)
+      return toast.error(
+        `Only admin (${selectedChat.groupAdmin.username}) can rename the group!`
+      );
+
     setRenameLoading(true);
 
     const config = {
@@ -87,7 +92,9 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
       return toast.error("User already in the group");
 
     if (selectedChat.groupAdmin._id !== user._id)
-      return toast.error("Only admins can add someone");
+      return toast.error(
+        `Only admin (${selectedChat.groupAdmin.username}) can add someone`
+      );
 
     setLoading(true);
 
@@ -119,10 +126,10 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
     setLoading(false);
   };
 
-  const handleRemoveUser = async (user1) => {
+  const handleRemove = async (user1) => {
     if (selectedChat.groupAdmin._id !== user._id && user1._id !== user._id)
       return toast.error(
-        `Only admin (${selectedChat.groupAdmin.name}) can remove someone!`
+        `Only admin (${selectedChat.groupAdmin.username}) can remove someone!`
       );
 
     const confirm = window.confirm(
@@ -162,8 +169,6 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
       setLoading(false);
     }
   };
-
-  const handleDelete = () => {};
 
   const postPic = (pics) => {
     if (pics === undefined) return toast.warning("Please select an image!");
@@ -261,22 +266,21 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
               </div>
 
               <div className="modal-input">
-                <div className="input-wrapper">
-                  <input
-                    type="text"
-                    placeholder="Chat Name"
-                    className="input-field"
-                    onChange={(e) => setGroupChatName(e.target.value)}
-                  />
-                  <button
-                    className="inside-button"
-                    disabled={renameLoading}
-                    onClick={handleRename}
-                  >
-                    {renameLoading ? "Updating in ..." : "Update"}
-                  </button>
-                </div>
+                <input
+                  type="text"
+                  placeholder="Chat Name"
+                  className="input-field"
+                  onChange={(e) => setGroupChatName(e.target.value)}
+                />
+                <button
+                  className="inside-button"
+                  disabled={renameLoading}
+                  onClick={handleRename}
+                >
+                  {renameLoading ? "Updating in ..." : "Update"}
+                </button>
               </div>
+
               <div className="modal-input2">
                 <input
                   type="text"
@@ -291,7 +295,7 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
                   <UserBadgeItem
                     key={u._id}
                     user={u}
-                    handleFunction={() => handleDelete(u)}
+                    handleFunction={() => handleRemove(u)}
                   />
                 ))}
               </div>
@@ -313,7 +317,7 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
               </div>
               <div className="modal-footer">
                 <button
-                  onClick={() => handleRemoveUser(user)}
+                  onClick={() => handleRemove(user)}
                   className="submit-button"
                 >
                   Leave Group

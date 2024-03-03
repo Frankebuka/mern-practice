@@ -27,7 +27,7 @@ const MessageSchema = new mongoose.Schema({
   createdAt: Date,
   pic: String,
   sender: UserSchema,
-  unread: Boolean,
+  unread: { type: Boolean, default: true },
   updatedAt: Date,
   receiver: String,
 });

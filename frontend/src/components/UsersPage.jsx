@@ -30,6 +30,7 @@ const UsersPage = () => {
     setFetchAgain,
     isTyping,
     recipientId,
+    notification,
   } = ChatState();
 
   const handleSearch = async (event) => {
@@ -102,34 +103,34 @@ const UsersPage = () => {
     fetchChats();
   }, [fetchAgain, selectedChat]);
 
-  const unreadUpdate = async (chat) => {
-    if (!chat.latestMessage) {
-      setSelectedChat(chat);
-    } else {
-      const config = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify({
-          messageId: chat.latestMessage?._id,
-          chatId: chat?._id,
-        }),
-      };
-      try {
-        const res = await fetch("/api/message/update", config);
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        const data = await res.json();
-        setSelectedChat(data);
-        setFetchAgain(!fetchAgain);
-      } catch (error) {
-        console.error("An error occurred:", error);
-      }
-    }
-  };
+  // const unreadUpdate = async (chat) => {
+  //   if (!chat.latestMessage) {
+  //     setSelectedChat(chat);
+  //   } else {
+  //     const config = {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${user?.token}`,
+  //       },
+  //       body: JSON.stringify({
+  //         messageId: chat.latestMessage?._id,
+  //         chatId: chat?._id,
+  //       }),
+  //     };
+  //     try {
+  //       const res = await fetch("/api/message/update", config);
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! Status: ${res.status}`);
+  //       }
+  //       const data = await res.json();
+  //       setSelectedChat(data);
+  //       setFetchAgain(!fetchAgain);
+  //     } catch (error) {
+  //       console.error("An error occurred:", error);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="users_container">
@@ -182,7 +183,8 @@ const UsersPage = () => {
         chats.map((chat) => (
           <div
             key={chat._id}
-            onClick={() => unreadUpdate(chat)}
+            // onClick={() => unreadUpdate(chat)}
+            onClick={() => setSelectedChat(chat)}
             className={`user_wrapper ${
               chat?._id === selectedChat?._id && "selected_user"
             }`}
@@ -207,10 +209,9 @@ const UsersPage = () => {
                       getSenderName(loggedUser, chat.users)
                     : chat.chatName}
                 </h4>
-                {chat.latestMessage?.unread &&
-                  chat.latestMessage?.sender._id !== user._id && (
-                    <small className="unread">New</small>
-                  )}
+                {notification.some(
+                  (notif) => notif.chat._id === chat._id && notif.unread
+                ) && <small className="unread">New</small>}
               </div>
               <div
                 className={`user_status ${

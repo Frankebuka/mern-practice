@@ -13,7 +13,6 @@ const sendMessage = async (req, res, next) => {
     sender: req.user._id,
     content,
     pic,
-    unread: true,
     chat: chatId,
   };
 
@@ -56,32 +55,4 @@ const allMessage = async (req, res, next) => {
   }
 };
 
-const updatedMessage = async (req, res, next) => {
-  const { messageId, chatId } = req.body;
-
-  const message = await Message.findByIdAndUpdate(
-    messageId,
-    { unread: false },
-    { new: true }
-  );
-
-  if (!message) return next(errorHandler(404, "Message Not Found"));
-
-  const chatUpdated = await Chat.findByIdAndUpdate(
-    chatId,
-    { latestMessage: message },
-    { new: true }
-  )
-    .populate("users")
-    .populate("groupAdmin")
-    .populate({
-      path: "latestMessage",
-      populate: [{ path: "sender", select: "username pic email" }],
-    });
-
-  if (!chatUpdated) return next(errorHandler(404, "Chat Not Found"));
-
-  res.json(chatUpdated);
-};
-
-export { sendMessage, allMessage, updatedMessage };
+export { sendMessage, allMessage };

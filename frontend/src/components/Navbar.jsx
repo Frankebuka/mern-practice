@@ -27,35 +27,21 @@ const Navbar = () => {
     toast.success("Logout successful");
   };
 
-  const removeSelectedChat = async (notif) => {
-    // Using fetch for DELETE request
-    await fetch(`/api/notification/${notif._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user?.token}`,
-      },
-    });
-
-    // Update state after deletion
-    setNotification(notification.filter((n) => n._id !== notif._id));
-
-    // Using fetch for PUT request
-    const res = await fetch("/api/message/update", {
+  const updateSelectedChat = async (notif) => {
+    const res = await fetch(`/api/notification/${notif._id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${user?.token}`,
       },
-      body: JSON.stringify({
-        messageId: notif.chat.latestMessage?._id,
-        chatId: notif.chat?._id,
-      }),
     });
 
-    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
-    if (data.success === false) return console.error(data.message);
+    await res.json();
+
+    setNotification(notification.filter((n) => n._id !== notif._id));
 
     setFetchAgain(!fetchAgain);
   };
@@ -94,7 +80,7 @@ const Navbar = () => {
                         key={notif._id}
                         onClick={() => {
                           setSelectedChat(notif.chat);
-                          removeSelectedChat(notif);
+                          updateSelectedChat(notif);
                           setOpenNotification(false);
                         }}
                       >

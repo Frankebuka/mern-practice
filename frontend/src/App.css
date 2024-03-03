@@ -247,7 +247,7 @@ section .form {
 .user_info {
   display: flex;
   justify-content: space-between;
-    align-items: center;
+  align-items: center;
   padding: 10px;
 }
 
@@ -289,7 +289,7 @@ section .form {
 }
 
 .selected_user {
-  background: var(--color-6)
+  background: var(--color-6);
 }
 
 .user_status {
@@ -533,8 +533,20 @@ section .form {
   outline: none;
 }
 
+.modal-input {
+  position: relative;
+  padding: 1rem;
+}
+
 .modal-input2 {
   padding: 16px 16px 6px 16px;
+}
+
+.inside-button {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  height: 33px;
 }
 
 .modal-footer {
@@ -544,9 +556,10 @@ section .form {
 }
 
 .submit-button {
-  width: 30%;
+  width: 35%;
   display: flex;
   justify-content: center;
+  white-space: nowrap;
 }
 
 .userlistitem_con {
@@ -557,7 +570,7 @@ section .form {
 }
 
 .userlistitem_wrapper {
-cursor: pointer;
+  cursor: pointer;
   width: 100%;
   border-radius: 12px;
   display: flex;
@@ -565,12 +578,12 @@ cursor: pointer;
   margin-bottom: 8px;
   padding: 1px 24px;
   margin: 1px 16px;
-  background-color: #E8E8E8;
+  background-color: #e8e8e8;
   color: black;
 }
 
 .userlistitem_wrapper:hover {
-  background-color: #38B2AC;
+  background-color: #38b2ac;
   color: white;
 }
 
@@ -694,13 +707,6 @@ cursor: pointer;
   margin-bottom: 24px;
 }
 
-.inside-button {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-}
-
 /* Message Page */
 .messages {
   height: calc(100vh - 200px);
@@ -735,7 +741,7 @@ cursor: pointer;
 
 .chat_name {
   font-style: italic;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .message_wrapper img {
@@ -778,6 +784,10 @@ cursor: pointer;
   .lottie {
     margin-left: 250px;
     margin-top: 200px;
+  }
+
+  .modal-box {
+    max-width: 50vw;
   }
 }
 
@@ -839,5 +849,9 @@ cursor: pointer;
   .lottie {
     margin-left: 150px;
     margin-top: 200px;
+  }
+
+  .modal-box {
+    max-width: 80vw;
   }
 }

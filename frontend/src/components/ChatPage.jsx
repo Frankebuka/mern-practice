@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { ChatState } from "../../Contest/ChatProvider";
 import {
   getReceiverId,
-  getSenderId,
   getSenderName,
   getSenderOnlineStatue,
 } from "../config/ChatLogics";
@@ -17,8 +16,8 @@ import Lottie from "lottie-react";
 import typingAnimation from "../animations/typing.json";
 import loadingAnimation from "../animations/loading.json";
 
-const ENDPOINT = "https://mern-practice-1.onrender.com/";
-var socket, selectedChatCompare;
+const ENDPOINT = "http://localhost:3000";
+var socket;
 
 const ChatPage = () => {
   const {
@@ -193,25 +192,15 @@ const ChatPage = () => {
 
   useEffect(() => {
     fetchMessages();
-
-    selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
-    socket.on("message received", async (newMessageReceived) => {
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageReceived.chat._id
-      ) {
-        // if (!notification.includes(newMessageReceived)) {
-        //   setNotification([newMessageReceived, ...notification]);
+    socket.on("message received", async (message) => {
+      if (!selectedChat || selectedChat._id !== message.chat._id) {
+        // if (!notification.includes(message)) {
+        //   setNotification([message, ...notification]);
         //   setFetchAgain(!fetchAgain);
         // }
-        const message = {
-          ...newMessageReceived,
-          receiver: getSenderId(user, newMessageReceived.chat.users),
-        };
-
         const config = {
           method: "POST",
           headers: {
@@ -231,7 +220,7 @@ const ChatPage = () => {
 
         setFetchAgain(!fetchAgain);
       } else {
-        setMessages([...messages, newMessageReceived]);
+        setMessages([...messages, message]);
       }
     });
 
@@ -253,6 +242,7 @@ const ChatPage = () => {
       }
       const data = await res.json();
       setNotification(data);
+      setFetchAgain(!fetchAgain);
     };
     fetchNotification();
   }, [fetchAgain]);
