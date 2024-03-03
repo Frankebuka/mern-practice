@@ -16,8 +16,8 @@ import Lottie from "lottie-react";
 import typingAnimation from "../animations/typing.json";
 import loadingAnimation from "../animations/loading.json";
 
-const ENDPOINT = "http://localhost:3000";
-var socket;
+const ENDPOINT = "https://mern-practice-1.onrender.com/";
+var socket, selectedChatCompare;
 
 const ChatPage = () => {
   const {
@@ -192,11 +192,16 @@ const ChatPage = () => {
 
   useEffect(() => {
     fetchMessages();
+
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
     socket.on("message received", async (message) => {
-      if (!selectedChat || selectedChat._id !== message.chat._id) {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== message.chat._id
+      ) {
         // if (!notification.includes(message)) {
         //   setNotification([message, ...notification]);
         //   setFetchAgain(!fetchAgain);

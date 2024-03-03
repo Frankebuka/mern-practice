@@ -32,15 +32,19 @@ const allNotification = async (req, res, next) => {
 };
 
 const updateNotification = async (req, res, next) => {
-  const notification = await Notification.findByIdAndUpdate(
-    req.params.id,
-    { unread: false },
-    { new: true }
-  );
-
-  if (!notification) return next(errorHandler(404, "Notification Not Found"));
-
-  res.json(notification);
+  try {
+    const notification = await Notification.updateMany(
+      {
+        "chat._id": req.params.id,
+        receiver: req.user.id,
+      },
+      { unread: false },
+      { new: true }
+    );
+    res.json(notification);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export { sendNotification, allNotification, updateNotification };

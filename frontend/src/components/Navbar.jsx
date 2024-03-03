@@ -10,14 +10,8 @@ import { getSenderName } from "../config/ChatLogics";
 
 const Navbar = () => {
   const [openNotification, setOpenNotification] = useState(false);
-  const {
-    user,
-    notification,
-    setNotification,
-    setSelectedChat,
-    fetchAgain,
-    setFetchAgain,
-  } = ChatState();
+  const { user, notification, setSelectedChat, fetchAgain, setFetchAgain } =
+    ChatState();
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -28,7 +22,7 @@ const Navbar = () => {
   };
 
   const updateSelectedChat = async (notif) => {
-    const res = await fetch(`/api/notification/${notif._id}`, {
+    const res = await fetch(`/api/notification/${notif.chat._id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${user?.token}`,
@@ -40,8 +34,6 @@ const Navbar = () => {
     }
 
     await res.json();
-
-    setNotification(notification.filter((n) => n._id !== notif._id));
 
     setFetchAgain(!fetchAgain);
   };

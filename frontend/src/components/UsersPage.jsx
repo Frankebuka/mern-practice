@@ -103,34 +103,24 @@ const UsersPage = () => {
     fetchChats();
   }, [fetchAgain, selectedChat]);
 
-  // const unreadUpdate = async (chat) => {
-  //   if (!chat.latestMessage) {
-  //     setSelectedChat(chat);
-  //   } else {
-  //     const config = {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${user?.token}`,
-  //       },
-  //       body: JSON.stringify({
-  //         messageId: chat.latestMessage?._id,
-  //         chatId: chat?._id,
-  //       }),
-  //     };
-  //     try {
-  //       const res = await fetch("/api/message/update", config);
-  //       if (!res.ok) {
-  //         throw new Error(`HTTP error! Status: ${res.status}`);
-  //       }
-  //       const data = await res.json();
-  //       setSelectedChat(data);
-  //       setFetchAgain(!fetchAgain);
-  //     } catch (error) {
-  //       console.error("An error occurred:", error);
-  //     }
-  //   }
-  // };
+  const unreadUpdate = async (chat) => {
+    if (!chat.latestMessage) {
+      setSelectedChat(chat);
+    } else {
+      const res = await fetch(`/api/notification/${chat?._id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      await res.json();
+      setSelectedChat(chat);
+      setFetchAgain(!fetchAgain);
+    }
+  };
 
   return (
     <div className="users_container">
@@ -183,8 +173,7 @@ const UsersPage = () => {
         chats.map((chat) => (
           <div
             key={chat._id}
-            // onClick={() => unreadUpdate(chat)}
-            onClick={() => setSelectedChat(chat)}
+            onClick={() => unreadUpdate(chat)}
             className={`user_wrapper ${
               chat?._id === selectedChat?._id && "selected_user"
             }`}
