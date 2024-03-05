@@ -3,9 +3,10 @@ import { IoMdClose } from "react-icons/io";
 import Tooltip from "./Tooltip";
 import { toast } from "react-toastify";
 import { ChatState } from "../../Contest/ChatProvider";
-import ChatLoading from "./ChatLoading";
 import UserListItem from "./UserListItem";
 import UserBadgeItem from "./UserBadgeItem";
+import Lottie from "lottie-react";
+import spinnerAnimation from "../animations/spinner.json";
 
 const GroupChatModal = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -134,7 +135,16 @@ const GroupChatModal = ({ children }) => {
 
               <div className="userlistitem_con">
                 {loading ? (
-                  <ChatLoading />
+                  <Lottie
+                    animationData={spinnerAnimation}
+                    loop
+                    autoplay
+                    style={{
+                      width: 50,
+                      height: 50,
+                      marginLeft: "50%",
+                    }}
+                  />
                 ) : (
                   searchResult
                     ?.slice(0, 3)

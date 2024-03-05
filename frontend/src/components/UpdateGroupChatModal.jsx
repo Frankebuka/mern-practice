@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChatState } from "../../Contest/ChatProvider";
 import UserBadgeItem from "./UserBadgeItem";
-import Loading from "./Loading";
 import UserListItem from "./UserListItem";
 import { IoMdClose } from "react-icons/io";
 import Tooltip from "./Tooltip";
 import { toast } from "react-toastify";
+import Lottie from "lottie-react";
+import spinnerAnimation from "../animations/spinner.json";
 
 const UpdateGroupChatModal = ({ children, fetchMessages }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -302,7 +303,16 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
 
               <div className="userlistitem_con">
                 {loading ? (
-                  <Loading />
+                  <Lottie
+                    animationData={spinnerAnimation}
+                    loop
+                    autoplay
+                    style={{
+                      width: 50,
+                      height: 50,
+                      marginLeft: "50%",
+                    }}
+                  />
                 ) : (
                   searchResult
                     ?.slice(0, 3)
