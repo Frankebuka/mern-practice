@@ -307,16 +307,19 @@ section .form {
 }
 
 .unread {
+  display: flex;
   margin-left: 10px;
   background: var(--color-3);
   color: white;
   padding: 2px 4px;
   border-radius: 10px;
+  font-size: 12px;
+  gap: 2px;
 }
 
 .truncate {
-  /* display: flex; */
-  /* align-items: center; */
+  display: flex;
+  align-items: center;
   font-size: 14px;
   white-space: nowrap;
   width: 90%;
@@ -326,8 +329,14 @@ section .form {
   padding-bottom: 15px;
 }
 
-.truncate strong {
-  margin-right: 10px;
+.strong {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.small {
+  font-size: 13px;
+  color: var(--color-4);
 }
 
 /* Navbar */

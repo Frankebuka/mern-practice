@@ -31,6 +31,7 @@ const UsersPage = () => {
     isTyping,
     recipientId,
     notification,
+    lastNotification,
   } = ChatState();
 
   const handleSearch = async (event) => {
@@ -110,6 +111,7 @@ const UsersPage = () => {
       const res = await fetch(`/api/notification/${chat?._id}`, {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user?.token}`,
         },
       });
@@ -117,6 +119,23 @@ const UsersPage = () => {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
       await res.json();
+
+      const response = await fetch("/api/message/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({
+          messageId: chat.latestMessage?._id,
+          chatId: chat?._id,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      await response.json();
+
       setSelectedChat(chat);
       setFetchAgain(!fetchAgain);
     }
@@ -198,9 +217,23 @@ const UsersPage = () => {
                       getSenderName(loggedUser, chat.users)
                     : chat.chatName}
                 </h4>
-                {notification.some(
+                {notification?.filter(
                   (notif) => notif.chat._id === chat._id && notif.unread
-                ) && <small className="unread">New</small>}
+                ).length > 0 && (
+                  <small className="unread">
+                    <div>
+                      {
+                        notification?.filter(
+                          (notif) => notif.chat._id === chat._id && notif.unread
+                        ).length
+                      }
+                    </div>
+                    <div>New</div>
+                  </small>
+                )}
+                {/* {notification?.some(
+                  (notif) => notif.chat._id === chat._id && notif.unread
+                ) && <small className="unread">New</small>} */}
               </div>
               <div
                 className={`user_status ${
@@ -214,27 +247,34 @@ const UsersPage = () => {
                 }`}
               ></div>
             </div>
-            <p className="truncate">
-              <strong>
-                {chat.latestMessage?.sender._id === user._id && "Me:"}
-              </strong>
-              {!chat.isGroupChat ? (
-                isTyping &&
-                recipientId === getReceiverId(loggedUser, chat?.users) ? (
-                  <small style={{ marginLeft: 5, fontSize: 10 }}>
-                    typing...
-                  </small>
-                ) : (
-                  chat.latestMessage &&
-                  (chat.latestMessage.content ||
-                    (chat.latestMessage.pic && <>Photo</>))
-                )
-              ) : (
-                chat.latestMessage &&
-                (chat.latestMessage.content ||
-                  (chat.latestMessage.pic && <>Photo</>))
-              )}
-            </p>
+            <div className="truncate">
+              {lastNotification?.map((notif) => (
+                <div key={notif._id}>
+                  {!notif.chat?.isGroupChat ? (
+                    isTyping &&
+                    recipientId === getReceiverId(loggedUser, chat?.users) ? (
+                      <small style={{ marginLeft: 5, fontSize: 10 }}>
+                        typing...
+                      </small>
+                    ) : (
+                      notif.chat._id === chat._id && (
+                        <p className={`${notif?.unread ? "strong" : "small"}`}>
+                          {notif?.sender._id === user._id && "Me:"}{" "}
+                          {notif?.content || (notif?.pic && <>Photo</>)}
+                        </p>
+                      )
+                    )
+                  ) : (
+                    notif.chat._id === chat._id && (
+                      <p className={`${notif?.unread ? "strong" : "small"}`}>
+                        {notif?.sender._id === user._id && "Me:"}{" "}
+                        {notif?.content || (notif?.pic && <>Photo</>)}
+                      </p>
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
 
@@ -254,8 +294,7 @@ const UsersPage = () => {
                   ? loggedUser &&
                     chat.users &&
                     getSenderPic(loggedUser, chat.users)
-                  : chat.pic ||
-                    "https://alppetro.co.id/dist/assets/images/default.jpg"
+                  : chat.pic
               }
               alt="avatar"
               className="avatar sm_screen"

@@ -13,6 +13,7 @@ const sendMessage = async (req, res, next) => {
     sender: req.user._id,
     content,
     pic,
+    unread: true,
     chat: chatId,
   };
 
@@ -55,4 +56,35 @@ const allMessage = async (req, res, next) => {
   }
 };
 
-export { sendMessage, allMessage };
+const updatedMessage = async (req, res) => {
+  const { messageId, chatId } = req.body;
+  try {
+    const updatedChat = await Message.findByIdAndUpdate(
+      messageId,
+      { unread: false },
+      { new: true }
+    );
+
+    if (!updatedChat) return next(errorHandler(404, "Message Not Found"));
+
+    const chatUpdate = await Chat.findByIdAndUpdate(
+      chatId,
+      { latestMessage: updatedChat },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate({
+        path: "latestMessage",
+        populate: [{ path: "sender", select: "name pic email" }],
+      });
+
+    if (!chatUpdate) return next(errorHandler(404, "Chat Not Found"));
+
+    res.json(chatUpdate);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { sendMessage, allMessage, updatedMessage };

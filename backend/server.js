@@ -10,6 +10,7 @@ import { errorHandlerMiddleware } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import path from "path";
+import Notification from "./models/notificationModel.js";
 
 dotenv.config();
 
@@ -78,15 +79,26 @@ io.on("connection", (socket) => {
     io.to(data.recipientId).emit("stop typing", data)
   );
 
-  socket.on("new message", (newMessageReceived) => {
+  socket.on("new message", async (newMessageReceived) => {
     var chat = newMessageReceived.chat;
 
     if (!chat.users) return console.log("Chat.users not defined");
 
-    chat.users.forEach((user) => {
-      if (user._id == newMessageReceived.sender._id) return;
+    chat.users.forEach(async (user) => {
+      const { _id, ...messageWithoutId } = newMessageReceived;
+      var messageForEachUser = { ...messageWithoutId, receiver: user._id };
 
-      socket.in(user._id).emit("message received", newMessageReceived);
+      if (user._id == messageForEachUser.sender._id) {
+        messageForEachUser = {
+          ...messageWithoutId,
+          unread: false,
+          receiver: user._id,
+        };
+      }
+
+      await Notification.create(messageForEachUser);
+
+      socket.in(user._id).emit("message received", messageForEachUser);
     });
   });
 

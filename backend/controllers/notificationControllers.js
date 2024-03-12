@@ -1,20 +1,4 @@
-import { errorHandler } from "../middleware/errorMiddleware.js";
 import Notification from "../models/notificationModel.js";
-
-const sendNotification = async (req, res, next) => {
-  const { message } = req.body;
-  if (!message)
-    return next(errorHandler(400, "Invalid data passed into request"));
-  try {
-    delete message._id;
-    message.receiver = req.user.id;
-
-    const notification = await Notification.create(message);
-    res.json(notification);
-  } catch (error) {
-    next(error);
-  }
-};
 
 const allNotification = async (req, res, next) => {
   try {
@@ -25,7 +9,17 @@ const allNotification = async (req, res, next) => {
       .sort({ updatedAt: -1 })
       .lean();
 
-    res.json(notifications);
+    const lastNotification = await Notification.aggregate([
+      {
+        $match: {
+          receiver: req.user.id,
+        },
+      },
+      { $sort: { updatedAt: -1 } },
+      { $group: { _id: "$chat._id", doc: { $first: "$$ROOT" } } },
+      { $replaceRoot: { newRoot: "$doc" } },
+    ]);
+    res.json({ notifications, lastNotification });
   } catch (error) {
     next(error);
   }
@@ -47,4 +41,4 @@ const updateNotification = async (req, res, next) => {
   }
 };
 
-export { sendNotification, allNotification, updateNotification };
+export { allNotification, updateNotification };

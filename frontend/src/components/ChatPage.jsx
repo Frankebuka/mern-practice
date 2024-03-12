@@ -29,6 +29,7 @@ const ChatPage = () => {
     isTyping,
     setIsTyping,
     setRecipientId,
+    setLastNotification,
   } = ChatState();
   const [img, setImg] = useState("");
   const [messages, setMessages] = useState([]);
@@ -199,33 +200,28 @@ const ChatPage = () => {
   useEffect(() => {
     socket.on("message received", async (message) => {
       if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== message.chat._id
+        selectedChatCompare ||
+        selectedChatCompare?._id === message.chat._id
       ) {
         // if (!notification.includes(message)) {
         //   setNotification([message, ...notification]);
         //   setFetchAgain(!fetchAgain);
         // }
-        const config = {
-          method: "POST",
+        const res = await fetch(`/api/notification/${message.chat._id}`, {
+          method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${user?.token}`,
           },
-          body: JSON.stringify({ message }),
-        };
-
-        const res = await fetch("/api/notification", config);
+        });
 
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
 
         await res.json();
-
-        setFetchAgain(!fetchAgain);
+        setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       } else {
-        setMessages([...messages, message]);
+        setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       }
     });
 
@@ -246,8 +242,8 @@ const ChatPage = () => {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
       const data = await res.json();
-      setNotification(data);
-      setFetchAgain(!fetchAgain);
+      setNotification(data.notifications);
+      setLastNotification(data.lastNotification);
     };
     fetchNotification();
   }, [fetchAgain]);
