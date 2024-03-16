@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "../../Contest/ChatProvider";
-import {
-  getReceiverId,
-  getSenderName,
-  getSenderOnlineStatue,
-} from "../config/ChatLogics";
+import { getSenderName, getSenderOnlineStatue } from "../config/ChatLogics";
 import { IoEye } from "react-icons/io5";
 import MessageForm from "./MessageForm";
 import UserProfileModal from "./UserProfileModal";
@@ -16,7 +12,7 @@ import Lottie from "lottie-react";
 import typingAnimation from "../animations/typing.json";
 import loadingAnimation from "../animations/loading.json";
 
-const ENDPOINT = "https://mern-practice-1.onrender.com/";
+const ENDPOINT = "http://mern-practice-1.onrender.com/";
 var socket, selectedChatCompare;
 
 const ChatPage = () => {
@@ -26,9 +22,6 @@ const ChatPage = () => {
     setFetchAgain,
     fetchAgain,
     setNotification,
-    isTyping,
-    setIsTyping,
-    setRecipientId,
     setLastNotification,
   } = ChatState();
   const [img, setImg] = useState("");
@@ -38,23 +31,14 @@ const ChatPage = () => {
   const [messageLoading, setMessageLoading] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
-    socket.on("typing", (data) => {
-      if (data.recipientId === user._id) {
-        setRecipientId(data.senderId);
-        setIsTyping(true);
-      }
-    });
-    socket.on("stop typing", (data) => {
-      if (data.recipientId === user._id) {
-        setRecipientId(null);
-        setIsTyping(false);
-      }
-    });
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
   }, []);
 
   const sendMessage = async (e) => {
@@ -65,10 +49,7 @@ const ChatPage = () => {
         position: "top-left",
       });
 
-    socket.emit("stop typing", {
-      senderId: user._id,
-      recipientId: getReceiverId(user, selectedChat?.users),
-    });
+    socket.emit("stop typing", selectedChat._id);
 
     setLoading(true);
     setNewMessage("");
@@ -105,15 +86,11 @@ const ChatPage = () => {
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
 
-    // Typing Indicator Logic
     if (!socketConnected) return;
 
     if (!typing) {
       setTyping(true);
-      socket.emit("typing", {
-        senderId: user._id,
-        recipientId: getReceiverId(user, selectedChat?.users),
-      });
+      socket.emit("typing", selectedChat._id);
     }
 
     let lastTypingTime = new Date().getTime();
@@ -124,10 +101,7 @@ const ChatPage = () => {
       var timeDiff = timeNow - lastTypingTime;
 
       if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", {
-          senderId: user._id,
-          recipientId: getReceiverId(user, selectedChat?.users),
-        });
+        socket.emit("stop typing", selectedChat._id);
         setTyping(false);
       }
     }, timerLength);
@@ -201,13 +175,9 @@ const ChatPage = () => {
     socket.on("message received", async (message) => {
       if (
         selectedChatCompare ||
-        selectedChatCompare?._id === message.chat._id
+        selectedChatCompare?._id === message.chat?._id
       ) {
-        // if (!notification.includes(message)) {
-        //   setNotification([message, ...notification]);
-        //   setFetchAgain(!fetchAgain);
-        // }
-        const res = await fetch(`/api/notification/${message.chat._id}`, {
+        const res = await fetch(`/api/notification/${message.chat?._id}`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${user?.token}`,
@@ -219,6 +189,7 @@ const ChatPage = () => {
         }
 
         await res.json();
+        setMessages([...messages, message]);
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       } else {
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);

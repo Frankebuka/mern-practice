@@ -13,8 +13,6 @@ export const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [notification, setNotification] = useState([]);
   const [lastNotification, setLastNotification] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
-  const [recipientId, setRecipientId] = useState();
 
   const navigate = useNavigate();
 
@@ -37,10 +35,6 @@ export const ChatProvider = ({ children }) => {
         setChats,
         notification,
         setNotification,
-        isTyping,
-        setIsTyping,
-        recipientId,
-        setRecipientId,
         lastNotification,
         setLastNotification,
       }}

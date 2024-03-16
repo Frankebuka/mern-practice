@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { ChatState } from "../../Contest/ChatProvider";
 import User from "../components/User";
 import {
-  getReceiverId,
   getSenderName,
   getSenderOnlineStatue,
   getSenderPic,
@@ -28,8 +27,6 @@ const UsersPage = () => {
     setChats,
     fetchAgain,
     setFetchAgain,
-    isTyping,
-    recipientId,
     notification,
     lastNotification,
   } = ChatState();
@@ -231,9 +228,6 @@ const UsersPage = () => {
                     <div>New</div>
                   </small>
                 )}
-                {/* {notification?.some(
-                  (notif) => notif.chat._id === chat._id && notif.unread
-                ) && <small className="unread">New</small>} */}
               </div>
               <div
                 className={`user_status ${
@@ -250,27 +244,11 @@ const UsersPage = () => {
             <div className="truncate">
               {lastNotification?.map((notif) => (
                 <div key={notif._id}>
-                  {!notif.chat?.isGroupChat ? (
-                    isTyping &&
-                    recipientId === getReceiverId(loggedUser, chat?.users) ? (
-                      <small style={{ marginLeft: 5, fontSize: 10 }}>
-                        typing...
-                      </small>
-                    ) : (
-                      notif.chat._id === chat._id && (
-                        <p className={`${notif?.unread ? "strong" : "small"}`}>
-                          {notif?.sender._id === user._id && "Me:"}{" "}
-                          {notif?.content || (notif?.pic && <>Photo</>)}
-                        </p>
-                      )
-                    )
-                  ) : (
-                    notif.chat._id === chat._id && (
-                      <p className={`${notif?.unread ? "strong" : "small"}`}>
-                        {notif?.sender._id === user._id && "Me:"}{" "}
-                        {notif?.content || (notif?.pic && <>Photo</>)}
-                      </p>
-                    )
+                  {notif.chat._id === chat._id && (
+                    <p className={`${notif?.unread ? "strong" : "small"}`}>
+                      {notif?.sender._id === user._id && "Me:"}{" "}
+                      {notif?.content || (notif?.pic && <>Photo</>)}
+                    </p>
                   )}
                 </div>
               ))}
