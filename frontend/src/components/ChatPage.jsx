@@ -12,7 +12,7 @@ import Lottie from "lottie-react";
 import typingAnimation from "../animations/typing.json";
 import loadingAnimation from "../animations/loading.json";
 
-const ENDPOINT = "http://mern-practice-1.onrender.com/";
+const ENDPOINT = "https://mern-practice-1.onrender.com";
 var socket, selectedChatCompare;
 
 const ChatPage = () => {
