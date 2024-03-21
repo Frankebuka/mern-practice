@@ -189,7 +189,6 @@ const ChatPage = () => {
         }
 
         await res.json();
-        setMessages([...messages, message]);
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       } else {
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
