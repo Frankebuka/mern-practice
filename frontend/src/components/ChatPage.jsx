@@ -78,7 +78,7 @@ const ChatPage = () => {
     }
 
     socket.emit("new message", data);
-    setMessages([...messages, data]);
+    setMessages((prevMessages) => [...prevMessages, data]);
     setLoading(false);
     setFetchAgain(!fetchAgain);
   };
@@ -189,7 +189,7 @@ const ChatPage = () => {
         }
 
         await res.json();
-        setMessages([...messages, message]);
+        setMessages((prevMessages) => [...prevMessages, message]);
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       } else {
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
