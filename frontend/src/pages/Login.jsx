@@ -119,7 +119,7 @@ const Login = () => {
                 });
               }}
             >
-              <>Get Guest User Credentials</>
+              <>Guest User</>
             </button>
           </div>
         </form>
