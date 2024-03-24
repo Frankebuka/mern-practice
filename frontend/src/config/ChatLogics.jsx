@@ -22,6 +22,8 @@ export const getSenderId = (loggedUser, users) => {
   return users[0]._id === loggedUser._id ? users[0]._id : users[1]._id;
 };
 
-export const getReceiverId = (loggedUser, users) => {
-  return users[0]._id === loggedUser._id ? users[1]._id : users[0]._id;
+export const getOtherUsersId = (loggedUser, users) => {
+  return users
+    .filter((user) => user._id !== loggedUser._id)
+    .map((user) => user._id);
 };

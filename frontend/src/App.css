@@ -329,13 +329,20 @@ section .form {
   padding-bottom: 15px;
 }
 
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-style: italic;
+}
+
 .strong {
   font-size: 13px;
   font-weight: bold;
 }
 
 .small {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-4);
 }
 

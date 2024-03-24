@@ -73,9 +73,17 @@ io.on("connection", (socket) => {
     console.log(`userId "${user._id}" joined room: ${room}`);
   });
 
-  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("typing", (data) => {
+    data.recipientId.forEach((id) => {
+      io.to(id).emit("typing", data);
+    });
+  });
 
-  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("stop typing", (data) => {
+    data.recipientId.forEach((id) => {
+      io.to(id).emit("stop typing", data);
+    });
+  });
 
   socket.on("new message", async (newMessageReceived) => {
     var chat = newMessageReceived.chat;

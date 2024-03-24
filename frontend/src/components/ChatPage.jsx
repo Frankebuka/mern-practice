@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChatState } from "../../Contest/ChatProvider";
-import { getSenderName, getSenderOnlineStatue } from "../config/ChatLogics";
+import {
+  getOtherUsersId,
+  getSenderName,
+  getSenderOnlineStatue,
+} from "../config/ChatLogics";
 import { IoEye } from "react-icons/io5";
 import MessageForm from "./MessageForm";
 import UserProfileModal from "./UserProfileModal";
@@ -16,14 +20,6 @@ const ENDPOINT = "https://mern-practice-1.onrender.com";
 var socket, selectedChatCompare;
 
 const ChatPage = () => {
-  const {
-    user,
-    selectedChat,
-    setFetchAgain,
-    fetchAgain,
-    setNotification,
-    setLastNotification,
-  } = ChatState();
   const [img, setImg] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,14 +27,44 @@ const ChatPage = () => {
   const [messageLoading, setMessageLoading] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const {
+    user,
+    selectedChat,
+    setFetchAgain,
+    fetchAgain,
+    setNotification,
+    setLastNotification,
+    isTyping,
+    setIsTyping,
+    typingChatId,
+    setTypingChatId,
+    setTypingSenderName,
+  } = ChatState();
+  const bottomRef = useRef();
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [isTyping]);
 
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
+    socket.on("typing", (data) => {
+      if (data.recipientId.includes(user._id)) {
+        setTypingChatId(data.chatId);
+        setTypingSenderName(data.senderName);
+        setIsTyping(true);
+      }
+    });
+
+    socket.on("stop typing", (data) => {
+      if (data.recipientId.includes(user._id)) {
+        setTypingChatId(null);
+        setTypingSenderName(null);
+        setIsTyping(false);
+      }
+    });
   }, []);
 
   const sendMessage = async (e) => {
@@ -49,7 +75,11 @@ const ChatPage = () => {
         position: "top-left",
       });
 
-    socket.emit("stop typing", selectedChat._id);
+    socket.emit("stop typing", {
+      chatId: selectedChat._id,
+      senderName: user.name,
+      recipientId: getOtherUsersId(user, selectedChat?.users),
+    });
 
     setLoading(true);
     setNewMessage("");
@@ -90,7 +120,11 @@ const ChatPage = () => {
 
     if (!typing) {
       setTyping(true);
-      socket.emit("typing", selectedChat._id);
+      socket.emit("typing", {
+        chatId: selectedChat._id,
+        senderName: user.username,
+        recipientId: getOtherUsersId(user, selectedChat?.users),
+      });
     }
 
     let lastTypingTime = new Date().getTime();
@@ -101,7 +135,11 @@ const ChatPage = () => {
       var timeDiff = timeNow - lastTypingTime;
 
       if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", selectedChat._id);
+        socket.emit("stop typing", {
+          chatId: selectedChat._id,
+          senderName: user.name,
+          recipientId: getOtherUsersId(user, selectedChat?.users),
+        });
         setTyping(false);
       }
     }, timerLength);
@@ -267,10 +305,17 @@ const ChatPage = () => {
                 className="lottie"
               />
             ) : (
-              messages?.map((m) => <Message key={m._id} m={m} user={user} />)
+              messages?.map((m) => (
+                <Message
+                  key={m._id}
+                  m={m}
+                  user={user}
+                  selectedChat={selectedChat}
+                />
+              ))
             )}
-            {isTyping && (
-              <div className="typing">
+            {isTyping && typingChatId === selectedChat._id && (
+              <div>
                 <Lottie
                   animationData={typingAnimation}
                   loop
@@ -284,6 +329,7 @@ const ChatPage = () => {
                 />
               </div>
             )}
+            <div ref={bottomRef} />
           </div>
           <MessageForm
             sendMessage={sendMessage}

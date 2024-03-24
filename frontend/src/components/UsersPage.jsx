@@ -29,6 +29,9 @@ const UsersPage = () => {
     setFetchAgain,
     notification,
     lastNotification,
+    isTyping,
+    typingChatId,
+    typingSenderName,
   } = ChatState();
 
   const handleSearch = async (event) => {
@@ -242,16 +245,23 @@ const UsersPage = () => {
               ></div>
             </div>
             <div className="truncate">
-              {lastNotification?.map((notif) => (
-                <div key={notif._id}>
-                  {notif.chat._id === chat._id && (
-                    <p className={`${notif?.unread ? "strong" : "small"}`}>
-                      {notif?.sender._id === user._id && "Me:"}{" "}
-                      {notif?.content || (notif?.pic && <>Photo</>)}
-                    </p>
-                  )}
+              {isTyping && typingChatId === chat._id ? (
+                <div className="typing">
+                  <p className="strong">{typingSenderName.split(" ")[0]}</p>
+                  <p className="small">typing...</p>
                 </div>
-              ))}
+              ) : (
+                lastNotification?.map((notif) => (
+                  <div key={notif._id}>
+                    {notif.chat._id === chat._id && (
+                      <p className={`${notif?.unread ? "strong" : "small"}`}>
+                        {notif?.sender._id === user._id && "Me:"}{" "}
+                        {notif?.content || (notif?.pic && <>Photo</>)}
+                      </p>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </div>
         ))}

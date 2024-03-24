@@ -13,6 +13,9 @@ export const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [notification, setNotification] = useState([]);
   const [lastNotification, setLastNotification] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingChatId, setTypingChatId] = useState(null);
+  const [typingSenderName, setTypingSenderName] = useState(null);
 
   const navigate = useNavigate();
 
@@ -37,6 +40,12 @@ export const ChatProvider = ({ children }) => {
         setNotification,
         lastNotification,
         setLastNotification,
+        isTyping,
+        setIsTyping,
+        typingChatId,
+        setTypingChatId,
+        typingSenderName,
+        setTypingSenderName,
       }}
     >
       {loading ? (
