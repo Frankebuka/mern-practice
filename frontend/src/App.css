@@ -676,11 +676,17 @@ section .form {
   text-align: center;
 }
 
-/* .messages_user h3 {
+.messages {
   display: flex;
-    align-items: center;
-    justify-content: center;
-} */
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  border-bottom: 1px solid var(--color-6);
+}
+
+.typingAnimation {
+  margin-top: auto;
+}
 
 .displayNone {
   display: none;
@@ -724,12 +730,6 @@ section .form {
 }
 
 /* Message Page */
-.messages {
-  height: calc(100vh - 200px);
-  overflow-y: auto;
-  border-bottom: 1px solid var(--color-6);
-}
-
 .message_wrapper {
   width: 100%;
   border-radius: 5px;

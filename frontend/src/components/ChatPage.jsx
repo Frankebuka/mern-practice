@@ -212,9 +212,15 @@ const ChatPage = () => {
   useEffect(() => {
     socket.on("message received", async (message) => {
       if (
-        selectedChatCompare ||
-        selectedChatCompare?._id === message.chat?._id
+        !selectedChatCompare ||
+        selectedChatCompare?._id !== message.chat?._id
       ) {
+        // if (!notification.includes(newMessageReceived)) {
+        //   setNotification([newMessageReceived, ...notification]);
+        //   setFetchAgain(!fetchAgain);
+        // }
+        setFetchAgain((prevFetchAgain) => !prevFetchAgain);
+      } else {
         const res = await fetch(`/api/notification/${message.chat?._id}`, {
           method: "PUT",
           headers: {
@@ -228,8 +234,6 @@ const ChatPage = () => {
 
         await res.json();
         setMessages((prevMessages) => [...prevMessages, message]);
-        setFetchAgain((prevFetchAgain) => !prevFetchAgain);
-      } else {
         setFetchAgain((prevFetchAgain) => !prevFetchAgain);
       }
     });
@@ -315,7 +319,7 @@ const ChatPage = () => {
               ))
             )}
             {isTyping && typingChatId === selectedChat._id && (
-              <div>
+              <div className="typingAnimation">
                 <Lottie
                   animationData={typingAnimation}
                   loop
