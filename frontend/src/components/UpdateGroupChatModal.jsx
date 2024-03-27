@@ -174,6 +174,11 @@ const UpdateGroupChatModal = ({ children, fetchMessages }) => {
   const postPic = (pics) => {
     if (pics === undefined) return toast.warning("Please select an image!");
 
+    if (selectedChat.groupAdmin._id !== user._id)
+      return toast.error(
+        `Only admin (${selectedChat.groupAdmin.username}) can update the group image!`
+      );
+
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
       const data = new FormData();
       data.append("file", pics);
