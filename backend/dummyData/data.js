@@ -3,57 +3,27 @@ export const chats = [
     isGroupChat: false,
     users: [
       {
-        name: "John Doe",
-        email: "john@example.com",
+        name: "Frank E",
+        email: "frank@example.com",
       },
       {
-        name: "Piyush",
-        email: "piyush@example.com",
+        name: "Racheal",
+        email: "racheal@example.com",
       },
     ],
     _id: "617a077e18c25468bc7c4dd4",
-    chatName: "John Doe",
-  },
-  {
-    isGroupChat: false,
-    users: [
-      {
-        name: "Guest User",
-        email: "guest@example.com",
-      },
-      {
-        name: "Piyush",
-        email: "piyush@example.com",
-      },
-    ],
-    _id: "617a077e18c25468b27c4dd4",
-    chatName: "Guest User",
-  },
-  {
-    isGroupChat: false,
-    users: [
-      {
-        name: "Anthony",
-        email: "anthony@example.com",
-      },
-      {
-        name: "Piyush",
-        email: "piyush@example.com",
-      },
-    ],
-    _id: "617a077e18c2d468bc7c4dd4",
-    chatName: "Anthony",
+    chatName: "Frank E",
   },
   {
     isGroupChat: true,
     users: [
       {
-        name: "John Doe",
-        email: "jon@example.com",
+        name: "Frank E",
+        email: "frank@example.com",
       },
       {
-        name: "Piyush",
-        email: "piyush@example.com",
+        name: "Racheal",
+        email: "racheal@example.com",
       },
       {
         name: "Guest User",
@@ -61,7 +31,7 @@ export const chats = [
       },
     ],
     _id: "617a518c4081150716472c78",
-    chatName: "Friends",
+    chatName: "New Group",
     groupAdmin: {
       name: "Guest User",
       email: "guest@example.com",
@@ -71,27 +41,42 @@ export const chats = [
     isGroupChat: false,
     users: [
       {
-        name: "Jane Doe",
-        email: "jane@example.com",
+        name: "Guest User",
+        email: "guest@example.com",
       },
       {
-        name: "Piyush",
-        email: "piyush@example.com",
+        name: "Frank",
+        email: "frank@example.com",
       },
     ],
-    _id: "617a077e18c25468bc7cfdd4",
-    chatName: "Jane Doe",
+    _id: "617a077e18c25468b27c4dd4",
+    chatName: "Guest User",
+  },
+  {
+    isGroupChat: false,
+    users: [
+      {
+        name: "User",
+        email: "user@example.com",
+      },
+      {
+        name: "Frank",
+        email: "frank@example.com",
+      },
+    ],
+    _id: "617a077e18c2d468bc7c4dd4",
+    chatName: "User",
   },
   {
     isGroupChat: true,
     users: [
       {
-        name: "John Doe",
-        email: "jon@example.com",
+        name: "Frank E",
+        email: "frank@example.com",
       },
       {
-        name: "Piyush",
-        email: "piyush@example.com",
+        name: "user",
+        email: "user@example.com",
       },
       {
         name: "Guest User",
@@ -99,7 +84,7 @@ export const chats = [
       },
     ],
     _id: "617a518c4081150016472c78",
-    chatName: "Chill Zone",
+    chatName: "New",
     groupAdmin: {
       name: "Guest User",
       email: "guest@example.com",
